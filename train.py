@@ -12,12 +12,24 @@ from sklearn.metrics import (
 )
 import pickle
 import json
+import os
 from datetime import datetime
+
+# ================================
+# ABSOLUTE PATH HANDLING
+# ================================
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DATA_PATH = os.path.join(BASE_DIR, "data", "churn_data.csv")
+MODEL_DIR = os.path.join(BASE_DIR, "models")
+os.makedirs(MODEL_DIR, exist_ok=True)
 
 # ================================
 # LOAD DATASET
 # ================================
-data = pd.read_csv("data/churn_data.csv")
+if not os.path.exists(DATA_PATH):
+    raise FileNotFoundError(f"Could not find baseline training data at: {DATA_PATH}")
+
+data = pd.read_csv(DATA_PATH)
 
 if 'customer_id' in data.columns:
     data = data.drop('customer_id', axis=1)
@@ -117,14 +129,12 @@ final_metrics["confusion_matrix"] = cm.tolist()
 # ================================
 # SAVE PIPELINE
 # ================================
-with open("models/pipeline.pkl", "wb") as f:
+with open(os.path.join(MODEL_DIR, "pipeline.pkl"), "wb") as f:
     pickle.dump(pipeline, f)
 
 # ================================
 # SAVE ALL JSON FILES
 # ================================
-
-# Data stats for drift detection
 data_stats = {}
 for col in numeric_cols:
     data_stats[col] = {
@@ -136,19 +146,16 @@ for col in numeric_cols:
         "p95": float(np.percentile(X_train[col], 95))
     }
 
-with open("models/data_stats.json", "w") as f:
+with open(os.path.join(MODEL_DIR, "data_stats.json"), "w") as f:
     json.dump(data_stats, f, indent=2)
 
-# Model metrics
-with open("models/metrics.json", "w") as f:
+with open(os.path.join(MODEL_DIR, "metrics.json"), "w") as f:
     json.dump(final_metrics, f, indent=2)
 
-# Model comparison
-with open("models/model_comparison.json", "w") as f:
+with open(os.path.join(MODEL_DIR, "model_comparison.json"), "w") as f:
     json.dump(comparison_results, f, indent=2)
 
-# Retraining history (append each run)
-history_path = "models/retrain_history.json"
+history_path = os.path.join(MODEL_DIR, "retrain_history.json")
 try:
     with open(history_path, "r") as f:
         history = json.load(f)
@@ -167,9 +174,3 @@ with open(history_path, "w") as f:
     json.dump(history, f, indent=2)
 
 print("✅ Training completed!")
-print(f"   Accuracy : {final_metrics['accuracy']}")
-print(f"   Precision: {final_metrics['precision']}")
-print(f"   Recall   : {final_metrics['recall']}")
-print(f"   F1 Score : {final_metrics['f1']}")
-print(f"   ROC-AUC  : {final_metrics['roc_auc']}")
-print("✅ All model files saved!")
