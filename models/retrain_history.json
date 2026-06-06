@@ -1,0 +1,16 @@
+[
+  {
+    "timestamp": "2026-06-06 19:52:44",
+    "best_model": "Gradient Boosting",
+    "roc_auc": 0.8729,
+    "f1": 0.5917,
+    "accuracy": 0.8675
+  },
+  {
+    "timestamp": "2026-06-06 20:07:41",
+    "best_model": "Gradient Boosting",
+    "roc_auc": 0.8729,
+    "f1": 0.5917,
+    "accuracy": 0.8675
+  }
+]

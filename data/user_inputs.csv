@@ -9,3 +9,4 @@ credit_score,country,gender,age,tenure,balance,products_number,credit_card,activ
 364,Spain,Female,66,3,50000.0,1,1,1,50000.0,1,0.53
 650,Germany,Male,30,4,50000.0,1,1,0,50000.0,0,0.16
 314,Spain,Male,88,2,68420.0,1,1,0,69800.0,1,0.69
+650,France,Male,30,3,50000.0,1,1,1,50000.0,0,0.0823081349455169
